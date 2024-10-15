@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Integration</title>
+    <style>
+        /* Add basic styles for the chat window */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        #chat-box {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #user-input {
+            width: 100%;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button id="send-btn">Send</button>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        // Connect to the WebSocket server
+        const socket = new WebSocket('ws://localhost:8081');
+
+        // Listen for messages from the server
+        socket.onmessage = function(event) {
+            const msg = document.createElement('p');
+            msg.textContent =' Bot: ${event.data}';
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+        };
+
+        // Send user input to the server
+        sendBtn.addEventListener('click', () => {
+            const userMessage = userInput.value;
+            const msg = document.createElement('p');
+            msg.textContent =' You: ${userMessage}';
+            chatBox.appendChild(msg);
+            socket.send(userMessage);  // Send the message to the server
+            userInput.value = '';  // Clear the input field
+        });
+    </script>
+   
+
+</body>
+</html>
